@@ -118,13 +118,13 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
   return (
     <TooltipProvider>
       <header className="bg-gray-800 border-b border-gray-700 shadow-lg w-full max-w-full overflow-hidden">
-        <div className="w-full px-3 sm:px-4 py-3">
+        <div className="w-full px-2 sm:px-4 py-2 sm:py-3">
           <div className="flex items-center justify-between w-full">
-            <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
+            <div className="flex items-center space-x-0.5 sm:space-x-2 flex-shrink-0">
               <img
                 src={flamoulakiIcon}
                 alt={t('appTitle') + ' Logo'}
-                className="w-8 h-8 sm:w-10 sm:h-10 object-contain cursor-pointer transition-transform hover:scale-105 mr-1 sm:mr-2 flex-shrink-0"
+                className="w-6 h-6 sm:w-10 sm:h-10 object-contain cursor-pointer transition-transform hover:scale-105 mr-1 sm:mr-2 flex-shrink-0"
                 onClick={() => onViewChange('home')}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -141,10 +141,10 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
                   <Button
                     variant="ghost"
                     onClick={() => onViewChange('home')}
-                    className="text-gray-300 hover:text-white hover:bg-gray-700 p-2"
+                    className="text-gray-300 hover:text-white hover:bg-gray-700 p-1 sm:p-2"
                     aria-label={t('backToHome')}
                   >
-                    <Home className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <Home className="h-12 w-12 sm:h-6 sm:w-6" />
                     <span className="hidden sm:inline ml-2">{t('home')}</span>
                   </Button>
                 </TooltipTrigger>
@@ -157,12 +157,12 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
                   <Button
                     variant="ghost"
                     onClick={() => onViewChange('calendar')}
-                    className={`text-gray-300 hover:text-white hover:bg-gray-700 p-2 ${
+                    className={`text-gray-300 hover:text-white hover:bg-gray-700 p-1 sm:p-2 ${
                       currentView === 'calendar' ? 'bg-gray-700' : ''
                     }`}
                     aria-label={t('viewCalendar')}
                   >
-                    <Calendar className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <Calendar className="h-12 w-12 sm:h-6 sm:w-6" />
                     <span className="hidden sm:inline ml-2">{t('calendar')}</span>
                   </Button>
                 </TooltipTrigger>
@@ -175,12 +175,12 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
                   <Button
                     variant="ghost"
                     onClick={() => onViewChange('list')}
-                    className={`text-gray-300 hover:text-white hover:bg-gray-700 p-2 ${
+                    className={`text-gray-300 hover:text-white hover:bg-gray-700 p-1 sm:p-2 ${
                       currentView === 'list' ? 'bg-gray-700' : ''
                     }`}
                     aria-label={t('viewList')}
                   >
-                    <List className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <List className="h-12 w-12 sm:h-6 sm:w-6" />
                     <span className="hidden sm:inline ml-2">{t('list')}</span>
                   </Button>
                 </TooltipTrigger>
@@ -193,12 +193,12 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
                   <Button
                     variant="ghost"
                     onClick={() => onViewChange('grouped')}
-                    className={`text-gray-300 hover:text-white hover:bg-gray-700 p-2 ${
+                    className={`text-gray-300 hover:text-white hover:bg-gray-700 p-1 sm:p-2 ${
                       currentView === 'grouped' ? 'bg-gray-700' : ''
                     }`}
                     aria-label={t('viewGrouped')}
                   >
-                    <Users className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <Users className="h-12 w-12 sm:h-6 sm:w-6" />
                     <span className="hidden sm:inline ml-2">{t('grouped')}</span>
                   </Button>
                 </TooltipTrigger>
@@ -211,12 +211,12 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
                   <Button
                     variant="ghost"
                     onClick={() => onViewChange('add')}
-                    className={`text-gray-300 hover:text-white hover:bg-gray-700 p-2 ${
+                    className={`text-gray-300 hover:text-white hover:bg-gray-700 p-1 sm:p-2 ${
                       currentView === 'add' ? 'bg-gray-700' : ''
                     }`}
                     aria-label={t('addNewEntry')}
                   >
-                    <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <Plus className="h-12 w-12 sm:h-6 sm:w-6" />
                     <span className="hidden sm:inline ml-2">{t('add')}</span>
                   </Button>
                 </TooltipTrigger>
@@ -225,7 +225,7 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
                 </TooltipContent>
               </Tooltip>
             </div>
-            <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
+            <div className="flex items-center space-x-0.5 sm:space-x-2 flex-shrink-0">
               {/* Info Button */}
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -233,10 +233,10 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
                     variant="ghost"
                     size="sm"
                     onClick={() => setInfoModalOpen(true)}
-                    className="text-gray-300 hover:text-white hover:bg-gray-700 p-2"
+                    className="text-gray-300 hover:text-white hover:bg-gray-700 p-1 sm:p-2"
                     aria-label="Info"
                   >
-                    <Info className="h-4 w-4" />
+                    <Info className="h-5 w-5 sm:h-5 sm:w-5" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -250,10 +250,10 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="text-gray-300 hover:text-white hover:bg-gray-700 p-2"
+                    className="text-gray-300 hover:text-white hover:bg-gray-700 p-1 sm:p-2"
                     aria-label={t('changeLanguage')}
                   >
-                    <Globe className="h-4 w-4" />
+                    <Globe className="h-5 w-5 sm:h-5 sm:w-5" />
                     <span className="hidden sm:inline ml-1">{currentLanguage === 'el' ? 'EL' : 'EN'}</span>
                   </Button>
                 </DropdownMenuTrigger>
@@ -278,10 +278,10 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="text-gray-300 hover:text-white hover:bg-gray-700 p-2"
+                    className="text-gray-300 hover:text-white hover:bg-gray-700 p-1 sm:p-2"
                     aria-label={t('backupRestore')}
                   >
-                    <Download className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <Download className="h-12 w-12 sm:h-6 sm:w-6" />
                     <span className="hidden sm:inline ml-2">{t('backupRestore')}</span>
                   </Button>
                 </DropdownMenuTrigger>
@@ -324,7 +324,7 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
             ))}
           </div>
           <div className="flex justify-between items-center pt-4">
-            <span className="text-xs text-gray-500">Ver 1.1</span>
+            <span className="text-xs text-gray-500">Ver 1.2</span>
             <Button
               onClick={() => setInfoModalOpen(false)}
               className="bg-green-600 hover:bg-green-700 text-white"
