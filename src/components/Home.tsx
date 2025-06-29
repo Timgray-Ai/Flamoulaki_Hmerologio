@@ -48,24 +48,31 @@ const Home: React.FC<HomeProps> = ({ onViewChange }) => {
   };
 
   const handleLanguageChange = async (language: 'el' | 'en') => {
-    await changeLanguage(language);
-    toast.success(t('languageChanged'), { duration: 1500 });
+    console.log('Home: Changing language to:', language);
+    try {
+      await changeLanguage(language);
+      console.log('Home: Language changed successfully to:', language);
+      toast.success(t('languageChanged'), { duration: 1500 });
+    } catch (error) {
+      console.error('Home: Error changing language:', error);
+      toast.error('Σφάλμα αλλαγής γλώσσας', { duration: 1500 });
+    }
   };
 
   const infoContent = getInfoContent();
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black overflow-x-hidden">
         {/* Mobile-optimized header */}
-        <header className="bg-gray-800 border-b border-gray-700 shadow-lg">
-          <div className="container mx-auto px-4 py-3 sm:py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
+        <header className="bg-gray-800 border-b border-gray-700 shadow-lg w-full max-w-full overflow-hidden">
+          <div className="w-full px-3 sm:px-4 py-3 sm:py-4">
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
                 <img
                   src={flamoulakiIcon}
                   alt={t('appTitle') + ' Logo'}
-                  className="w-10 h-10 sm:w-12 sm:h-12 object-contain cursor-pointer transition-transform hover:scale-105"
+                  className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 object-contain cursor-pointer transition-transform hover:scale-105 flex-shrink-0"
                   onClick={() => onViewChange('list')}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
@@ -79,13 +86,13 @@ const Home: React.FC<HomeProps> = ({ onViewChange }) => {
                 />
               </div>
               
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
                 {/* Info Button */}
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setInfoModalOpen(true)}
-                  className="text-gray-300 hover:text-white hover:bg-gray-700"
+                  className="text-gray-300 hover:text-white hover:bg-gray-700 p-2 sm:p-2"
                   aria-label="Info"
                 >
                   <Info className="h-4 w-4" />
@@ -97,11 +104,11 @@ const Home: React.FC<HomeProps> = ({ onViewChange }) => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-gray-300 hover:text-white hover:bg-gray-700"
+                      className="text-gray-300 hover:text-white hover:bg-gray-700 p-2 sm:p-2"
                       aria-label={t('changeLanguage')}
                     >
                       <Globe className="h-4 w-4 mr-1" />
-                      {currentLanguage === 'el' ? 'EL' : 'EN'}
+                      <span className="hidden sm:inline">{currentLanguage === 'el' ? 'EL' : 'EN'}</span>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
@@ -125,81 +132,81 @@ const Home: React.FC<HomeProps> = ({ onViewChange }) => {
         </header>
 
         {/* Main content */}
-        <main className="container mx-auto px-4 py-6 sm:py-8">
+        <main className="w-full px-3 sm:px-4 py-6 sm:py-8 max-w-full overflow-hidden">
           {/* Mobile-optimized title section */}
-          <div className="text-center mb-8 sm:mb-12">
-            <h1 className="text-4xl sm:text-6xl font-bold mb-3 sm:mb-4">
+          <div className="text-center mb-8 sm:mb-12 w-full">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-3 sm:mb-4 px-2">
               <div style={{ color: '#a44ef4' }}>{t('appTitle')}</div>
             </h1>
-            <h2 className="text-2xl sm:text-4xl font-bold mb-6 sm:mb-8">
+            <h2 className="text-xl sm:text-2xl md:text-4xl font-bold mb-6 sm:mb-8 px-2">
               <div style={{ color: '#f66e14' }}>{t('cropDiary')}</div>
             </h2>
           </div>
 
           {/* Mobile-optimized navigation buttons grid */}
-          <div className="max-w-2xl mx-auto">
+          <div className="w-full max-w-2xl mx-auto px-2">
             <div 
-              className="grid grid-cols-2 gap-3 sm:gap-6"
+              className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-6 w-full"
               role="grid"
               aria-label={t('appNavigationOptions')}
             >
               <Button
                 onClick={() => onViewChange('calendar')}
-                className="h-24 sm:h-32 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95"
+                className="h-20 sm:h-24 md:h-32 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 w-full"
                 data-nav-index="0"
                 aria-label={t('openCalendarView')}
                 role="gridcell"
               >
-                <div className="flex flex-col items-center space-y-2 sm:space-y-3">
-                  <Calendar className="w-6 h-6 sm:w-8 sm:h-8" aria-hidden="true" />
-                  <span className="text-sm sm:text-lg font-semibold">{t('calendar')}</span>
+                <div className="flex flex-col items-center space-y-1 sm:space-y-2 md:space-y-3">
+                  <Calendar className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" aria-hidden="true" />
+                  <span className="text-xs sm:text-sm md:text-lg font-semibold">{t('calendar')}</span>
                 </div>
               </Button>
 
               <Button
                 onClick={() => onViewChange('list')}
-                className="h-24 sm:h-32 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95"
+                className="h-20 sm:h-24 md:h-32 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 w-full"
                 data-nav-index="1"
                 aria-label={t('openCropList')}
                 role="gridcell"
               >
-                <div className="flex flex-col items-center space-y-2 sm:space-y-3">
-                  <List className="w-6 h-6 sm:w-8 sm:h-8" aria-hidden="true" />
-                  <span className="text-sm sm:text-lg font-semibold">{t('list')}</span>
+                <div className="flex flex-col items-center space-y-1 sm:space-y-2 md:space-y-3">
+                  <List className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" aria-hidden="true" />
+                  <span className="text-xs sm:text-sm md:text-lg font-semibold">{t('list')}</span>
                 </div>
               </Button>
 
               <Button
                 onClick={() => onViewChange('grouped')}
-                className="h-24 sm:h-32 bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95"
+                className="h-20 sm:h-24 md:h-32 bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 w-full"
                 data-nav-index="2"
                 aria-label={t('openGroupedView')}
                 role="gridcell"
               >
-                <div className="flex flex-col items-center space-y-2 sm:space-y-3">
-                  <Users className="w-6 h-6 sm:w-8 sm:h-8" aria-hidden="true" />
-                  <span className="text-sm sm:text-lg font-semibold">{t('grouped')}</span>
+                <div className="flex flex-col items-center space-y-1 sm:space-y-2 md:space-y-3">
+                  <Users className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" aria-hidden="true" />
+                  <span className="text-xs sm:text-sm md:text-lg font-semibold">{t('grouped')}</span>
                 </div>
               </Button>
 
               <Button
                 onClick={() => onViewChange('add')}
-                className="h-24 sm:h-32 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95"
+                className="h-20 sm:h-24 md:h-32 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 w-full"
                 data-nav-index="3"
                 aria-label={t('addNewCrop')}
                 role="gridcell"
               >
-                <div className="flex flex-col items-center space-y-2 sm:space-y-3">
-                  <Plus className="w-6 h-6 sm:w-8 sm:h-8" aria-hidden="true" />
-                  <span className="text-sm sm:text-lg font-semibold">{t('add')}</span>
+                <div className="flex flex-col items-center space-y-1 sm:space-y-2 md:space-y-3">
+                  <Plus className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" aria-hidden="true" />
+                  <span className="text-xs sm:text-sm md:text-lg font-semibold">{t('add')}</span>
                 </div>
               </Button>
             </div>
           </div>
 
           {/* Mobile-optimized welcome message */}
-          <div className="text-center mt-8 sm:mt-12">
-            <p className="text-gray-300 text-base sm:text-lg px-4" role="banner">
+          <div className="text-center mt-8 sm:mt-12 w-full">
+            <p className="text-gray-300 text-sm sm:text-base md:text-lg px-2 sm:px-4" role="banner">
               {t('welcomeToCropSystem')}
             </p>
           </div>
@@ -221,7 +228,8 @@ const Home: React.FC<HomeProps> = ({ onViewChange }) => {
               </p>
             ))}
           </div>
-          <div className="flex justify-end pt-4">
+          <div className="flex justify-between items-center pt-4">
+            <span className="text-xs text-gray-500">Ver 1.1</span>
             <Button
               onClick={() => setInfoModalOpen(false)}
               className="bg-green-600 hover:bg-green-700 text-white"

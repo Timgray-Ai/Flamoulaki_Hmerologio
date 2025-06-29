@@ -79,6 +79,7 @@
   "backupSaved": "Αποθηκεύτηκε στο φάκελο Downloads/crop_backups",
   "backupError": "Σφάλμα κατά τη δημιουργία αντιγράφου ασφαλείας",
   "restoreError": "Σφάλμα κατά την επαναφορά",
+  "restoreSuccess": "Επαναφορά επιτυχής",
   "cropDiary": "ημερολόγιο καλλιεργειών",
   "goToCropList": "Μετάβαση στη λίστα καλλιεργειών",
   "appNavigationOptions": "Επιλογές πλοήγησης εφαρμογής",

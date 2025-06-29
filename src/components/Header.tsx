@@ -17,6 +17,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import flamoulakiIcon from '../../images/Flamoulaki-icon.png';
 
 const Header = ({ currentView, onViewChange, isAuthenticated }) => {
@@ -25,6 +31,10 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
   const { t, currentLanguage, changeLanguage } = useLanguage();
   const fileInputRef = useRef(null);
   const [infoModalOpen, setInfoModalOpen] = useState(false);
+
+  // Debug: Log current language state
+  console.log('Header: Current language:', currentLanguage);
+  console.log('Header: Is authenticated:', isAuthenticated);
 
   const handleBackup = async () => {
     try {
@@ -47,13 +57,38 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
         fileInputRef.current.click();
       }
     } catch (error) {
+      console.error('Restore error:', error);
       toast.error(t('restoreError'), { duration: 1500 });
     }
   };
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      try {
+        await importFromJson(file);
+        toast.success(t('restoreSuccess'), { duration: 1500 });
+      } catch (error) {
+        console.error('File import error:', error);
+        toast.error(t('restoreError'), { duration: 1500 });
+      }
+    }
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const handleLanguageChange = async (language: 'el' | 'en') => {
-    await changeLanguage(language);
-    toast.success(t('languageChanged'), { duration: 1500 });
+    console.log('Header: Changing language to:', language);
+    try {
+      await changeLanguage(language);
+      console.log('Header: Language changed successfully to:', language);
+      toast.success(t('languageChanged'), { duration: 1500 });
+    } catch (error) {
+      console.error('Header: Error changing language:', error);
+      toast.error('Σφάλμα αλλαγής γλώσσας', { duration: 1500 });
+    }
   };
 
   const getInfoContent = () => {
@@ -81,15 +116,15 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
   const infoContent = getInfoContent();
 
   return (
-    <>
-      <header className="bg-gray-800 border-b border-gray-700 shadow-lg">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
+    <TooltipProvider>
+      <header className="bg-gray-800 border-b border-gray-700 shadow-lg w-full max-w-full overflow-hidden">
+        <div className="w-full px-3 sm:px-4 py-3">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
               <img
                 src={flamoulakiIcon}
                 alt={t('appTitle') + ' Logo'}
-                className="w-8 h-8 sm:w-10 sm:h-10 object-contain cursor-pointer transition-transform hover:scale-105 mr-2"
+                className="w-8 h-8 sm:w-10 sm:h-10 object-contain cursor-pointer transition-transform hover:scale-105 mr-1 sm:mr-2 flex-shrink-0"
                 onClick={() => onViewChange('home')}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -101,71 +136,113 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
                 role="button"
                 aria-label={t('backToHome')}
               />
-              <Button
-                variant="ghost"
-                onClick={() => onViewChange('home')}
-                className="text-gray-300 hover:text-white hover:bg-gray-700"
-                aria-label={t('backToHome')}
-              >
-                <Home className="h-5 w-5 mr-2" />
-                {t('home')}
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => onViewChange('calendar')}
-                className={`text-gray-300 hover:text-white hover:bg-gray-700 ${
-                  currentView === 'calendar' ? 'bg-gray-700' : ''
-                }`}
-                aria-label={t('viewCalendar')}
-              >
-                <Calendar className="h-5 w-5 mr-2" />
-                {t('calendar')}
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => onViewChange('list')}
-                className={`text-gray-300 hover:text-white hover:bg-gray-700 ${
-                  currentView === 'list' ? 'bg-gray-700' : ''
-                }`}
-                aria-label={t('viewList')}
-              >
-                <List className="h-5 w-5 mr-2" />
-                {t('list')}
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => onViewChange('grouped')}
-                className={`text-gray-300 hover:text-white hover:bg-gray-700 ${
-                  currentView === 'grouped' ? 'bg-gray-700' : ''
-                }`}
-                aria-label={t('viewGrouped')}
-              >
-                <Users className="h-5 w-5 mr-2" />
-                {t('grouped')}
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => onViewChange('add')}
-                className={`text-gray-300 hover:text-white hover:bg-gray-700 ${
-                  currentView === 'add' ? 'bg-gray-700' : ''
-                }`}
-                aria-label={t('addNewEntry')}
-              >
-                <Plus className="h-5 w-5 mr-2" />
-                {t('add')}
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    onClick={() => onViewChange('home')}
+                    className="text-gray-300 hover:text-white hover:bg-gray-700 p-2"
+                    aria-label={t('backToHome')}
+                  >
+                    <Home className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <span className="hidden sm:inline ml-2">{t('home')}</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{t('home')}</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    onClick={() => onViewChange('calendar')}
+                    className={`text-gray-300 hover:text-white hover:bg-gray-700 p-2 ${
+                      currentView === 'calendar' ? 'bg-gray-700' : ''
+                    }`}
+                    aria-label={t('viewCalendar')}
+                  >
+                    <Calendar className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <span className="hidden sm:inline ml-2">{t('calendar')}</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{t('calendar')}</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    onClick={() => onViewChange('list')}
+                    className={`text-gray-300 hover:text-white hover:bg-gray-700 p-2 ${
+                      currentView === 'list' ? 'bg-gray-700' : ''
+                    }`}
+                    aria-label={t('viewList')}
+                  >
+                    <List className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <span className="hidden sm:inline ml-2">{t('list')}</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{t('list')}</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    onClick={() => onViewChange('grouped')}
+                    className={`text-gray-300 hover:text-white hover:bg-gray-700 p-2 ${
+                      currentView === 'grouped' ? 'bg-gray-700' : ''
+                    }`}
+                    aria-label={t('viewGrouped')}
+                  >
+                    <Users className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <span className="hidden sm:inline ml-2">{t('grouped')}</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{t('grouped')}</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    onClick={() => onViewChange('add')}
+                    className={`text-gray-300 hover:text-white hover:bg-gray-700 p-2 ${
+                      currentView === 'add' ? 'bg-gray-700' : ''
+                    }`}
+                    aria-label={t('addNewEntry')}
+                  >
+                    <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <span className="hidden sm:inline ml-2">{t('add')}</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{t('add')}</p>
+                </TooltipContent>
+              </Tooltip>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
               {/* Info Button */}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setInfoModalOpen(true)}
-                className="text-gray-300 hover:text-white hover:bg-gray-700"
-                aria-label="Info"
-              >
-                <Info className="h-4 w-4" />
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setInfoModalOpen(true)}
+                    className="text-gray-300 hover:text-white hover:bg-gray-700 p-2"
+                    aria-label="Info"
+                  >
+                    <Info className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Info</p>
+                </TooltipContent>
+              </Tooltip>
 
               {/* Language Switcher */}
               <DropdownMenu>
@@ -173,11 +250,11 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="text-gray-300 hover:text-white hover:bg-gray-700"
+                    className="text-gray-300 hover:text-white hover:bg-gray-700 p-2"
                     aria-label={t('changeLanguage')}
                   >
-                    <Globe className="h-4 w-4 mr-1" />
-                    {currentLanguage === 'el' ? 'EL' : 'EN'}
+                    <Globe className="h-4 w-4" />
+                    <span className="hidden sm:inline ml-1">{currentLanguage === 'el' ? 'EL' : 'EN'}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
@@ -196,41 +273,36 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              {isAuthenticated && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      className="text-gray-300 hover:text-white hover:bg-gray-700"
-                    >
-                      <Download className="h-5 w-5 mr-2" />
-                      {t('backupRestore')}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem onClick={handleBackup}>
-                      <Download className="h-4 w-4 mr-2" />
-                      {t('createBackup')}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleRestore}>
-                      <Upload className="h-4 w-4 mr-2" />
-                      {t('restoreFromBackup')}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
+              {/* Backup/Restore - Available to all users since it uses localStorage */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="text-gray-300 hover:text-white hover:bg-gray-700 p-2"
+                    aria-label={t('backupRestore')}
+                  >
+                    <Download className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <span className="hidden sm:inline ml-2">{t('backupRestore')}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={handleBackup}>
+                    <Download className="h-4 w-4 mr-2" />
+                    {t('createBackup')}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleRestore}>
+                    <Upload className="h-4 w-4 mr-2" />
+                    {t('restoreFromBackup')}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
         <input
           type="file"
           ref={fileInputRef}
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) {
-              importFromJson(file);
-            }
-          }}
+          onChange={handleFileChange}
           accept=".json"
           className="hidden"
         />
@@ -251,7 +323,8 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
               </p>
             ))}
           </div>
-          <div className="flex justify-end pt-4">
+          <div className="flex justify-between items-center pt-4">
+            <span className="text-xs text-gray-500">Ver 1.1</span>
             <Button
               onClick={() => setInfoModalOpen(false)}
               className="bg-green-600 hover:bg-green-700 text-white"
@@ -261,7 +334,7 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
           </div>
         </DialogContent>
       </Dialog>
-    </>
+    </TooltipProvider>
   );
 };
 

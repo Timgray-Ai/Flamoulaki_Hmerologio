@@ -159,7 +159,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black overflow-x-hidden">
       {currentView !== 'home' && (
         <Header
           currentView={currentView}
@@ -167,7 +167,7 @@ const Index = () => {
           isAuthenticated={isAuthenticated}
         />
       )}
-      <main className="container mx-auto px-4 py-8">
+      <main className="w-full px-3 sm:px-4 py-6 sm:py-8 max-w-full overflow-hidden">
         {renderContent()}
       </main>
     </div>

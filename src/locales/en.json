@@ -162,7 +162,7 @@
   "backupDescription": "Create a backup of your data",
   "restoreDescription": "Restore your data from a backup",
   "backupSuccess": "Backup created successfully",
-  "restoreSuccess": "Data restored successfully",
+  "restoreSuccess": "Restore successful",
   "clearStorage": "Clear Storage",
   "clearStorageDescription": "Delete all app data",
   "clearStorageConfirm": "Are you sure you want to delete all data? This action cannot be undone.",

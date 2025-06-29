@@ -12,7 +12,7 @@ const App = () => {
   return (
     <LanguageProvider>
       <QueryClientProvider client={queryClient}>
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black overflow-x-hidden">
           <Index />
           <LanguageSelector />
           <Toaster position="top-center" />
