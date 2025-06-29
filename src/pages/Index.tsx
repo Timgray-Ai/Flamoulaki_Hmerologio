@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useEntries } from '../hooks/useEntries';
 import { useOfflineSync } from '../hooks/useOfflineSync';
+import { useLanguage } from '../contexts/LanguageContext';
 import AuthForm from '../components/AuthForm';
 import CropEntryList from '../components/CropEntryList';
 import CropCalendar from '../components/CropCalendar';
@@ -22,6 +23,7 @@ interface PendingOperation {
 }
 
 const Index = () => {
+  const { t } = useLanguage();
   const { user, isLoading: authLoading, signIn, signOut, isAuthenticated } = useAuth();
   const { entries, addEntry, deleteEntry, updateEntry, isAddingEntry } = useEntries();
   const [currentView, setCurrentView] = useState<ViewType>('home');
@@ -79,7 +81,7 @@ const Index = () => {
           entryId: editingEntry.id,
           data: entryData
         });
-        toast.info('Αλλαγή αποθηκεύτηκε offline');
+        toast.info(t('changeSavedOffline'), { duration: 1500 });
       }
       setEditingEntry(null);
     } else {
@@ -91,7 +93,7 @@ const Index = () => {
           type: 'add',
           data: entryData
         });
-        toast.info('Καταχώριση αποθηκεύτηκε offline');
+        toast.info(t('entrySavedOffline'), { duration: 1500 });
       }
     }
     
@@ -113,7 +115,7 @@ const Index = () => {
         type: 'delete',
         entryId: id
       });
-      toast.info('Διαγραφή αποθηκεύτηκε offline');
+      toast.info(t('deletionSavedOffline'), { duration: 1500 });
     }
   };
 
@@ -123,7 +125,7 @@ const Index = () => {
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black dark flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-green-400 mx-auto mb-4" />
-          <p className="text-gray-300">Φόρτωση...</p>
+          <p className="text-gray-300">{t('loading')}</p>
         </div>
       </div>
     );
@@ -163,7 +165,6 @@ const Index = () => {
           currentView={currentView}
           onViewChange={handleViewChange}
           isAuthenticated={isAuthenticated}
-          onSignOut={signOut}
         />
       )}
       <main className="container mx-auto px-4 py-8">

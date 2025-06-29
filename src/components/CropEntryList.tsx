@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { CropEntry } from '../types/cropEntry';
 import { format } from 'date-fns';
-import { el } from 'date-fns/locale';
+import { el, enUS } from 'date-fns/locale';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Edit, Trash2, Calendar, Filter, X, FileText } from 'lucide-react';
 import { useCustomOptions } from '../hooks/useCustomOptions';
+import { useLanguage } from '../contexts/LanguageContext';
 import {
   Select,
   SelectContent,
@@ -21,10 +22,16 @@ interface CropEntryListProps {
 }
 
 const CropEntryList: React.FC<CropEntryListProps> = ({ entries, onDelete, onEdit }) => {
+  const { t, currentLanguage } = useLanguage();
   const { getAllPlants } = useCustomOptions();
   const allPlants = getAllPlants();
   const [selectedCrop, setSelectedCrop] = useState<string>('all');
   const [selectedJob, setSelectedJob] = useState<string>('all');
+
+  // Get the appropriate locale for date formatting
+  const getLocale = () => {
+    return currentLanguage === 'el' ? el : enUS;
+  };
 
   const getPlantData = (plantId: string) => {
     const plant = allPlants.find(p => p.id === plantId);
@@ -52,8 +59,8 @@ const CropEntryList: React.FC<CropEntryListProps> = ({ entries, onDelete, onEdit
         <div className="w-16 h-16 sm:w-24 sm:h-24 mx-auto mb-4 bg-gray-700 rounded-full flex items-center justify-center">
           <Calendar className="w-8 h-8 sm:w-12 sm:h-12 text-gray-500" />
         </div>
-        <h3 className="text-lg sm:text-xl font-medium text-gray-300 mb-2">Δεν υπάρχουν καταχωρίσεις</h3>
-        <p className="text-sm sm:text-base text-gray-400">Δεν υπάρχουν καταχωρίσεις για προβολή.</p>
+        <h3 className="text-lg sm:text-xl font-medium text-gray-300 mb-2">{t('noEntries')}</h3>
+        <p className="text-sm sm:text-base text-gray-400">{t('noEntriesToView')}</p>
       </div>
     );
   }
@@ -79,7 +86,7 @@ const CropEntryList: React.FC<CropEntryListProps> = ({ entries, onDelete, onEdit
               </p>
               <div className="flex items-center text-xs text-gray-500 mb-2">
                 <Calendar className="w-3 h-3 mr-1" />
-                {format(new Date(entry.date), 'dd/MM/yyyy', { locale: el })}
+                {format(new Date(entry.date), 'dd/MM/yyyy', { locale: getLocale() })}
               </div>
               {entry.notes && (
                 <div className="mt-2 p-2 bg-gray-700/50 rounded-md">
@@ -124,13 +131,13 @@ const CropEntryList: React.FC<CropEntryListProps> = ({ entries, onDelete, onEdit
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row gap-4 p-4 bg-gray-800 rounded-lg">
         <div className="flex-1">
-          <label className="text-sm text-gray-400 mb-2 block">Καλλιέργεια</label>
+          <label className="text-sm text-gray-400 mb-2 block">{t('plant')}</label>
           <Select value={selectedCrop} onValueChange={setSelectedCrop}>
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Επιλέξτε καλλιέργεια" />
+              <SelectValue placeholder={t('selectPlant')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Όλες οι καλλιέργειες</SelectItem>
+              <SelectItem value="all">{t('allPlants')}</SelectItem>
               {allPlants.map(plant => (
                 <SelectItem key={plant.id} value={plant.id}>
                   <div className="flex items-center gap-2">
@@ -147,13 +154,13 @@ const CropEntryList: React.FC<CropEntryListProps> = ({ entries, onDelete, onEdit
         </div>
         
         <div className="flex-1">
-          <label className="text-sm text-gray-400 mb-2 block">Εργασία</label>
+          <label className="text-sm text-gray-400 mb-2 block">{t('task')}</label>
           <Select value={selectedJob} onValueChange={setSelectedJob}>
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Επιλέξτε εργασία" />
+              <SelectValue placeholder={t('selectTask')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Όλες οι εργασίες</SelectItem>
+              <SelectItem value="all">{t('allTasks')}</SelectItem>
               {uniqueTasks.map(task => (
                 <SelectItem key={task} value={task}>
                   {task}
@@ -181,7 +188,7 @@ const CropEntryList: React.FC<CropEntryListProps> = ({ entries, onDelete, onEdit
       <div className="space-y-2 sm:space-y-4">
         {filteredEntries.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-gray-400">Δεν βρέθηκαν καταχωρίσεις με τα επιλεγμένα φίλτρα</p>
+            <p className="text-gray-400">{t('noEntriesWithFilters')}</p>
           </div>
         ) : (
           filteredEntries.map(renderEntry)

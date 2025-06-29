@@ -1,11 +1,12 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { LogOut, User } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const AuthButton: React.FC = () => {
   const { user, signOut, isAuthenticated } = useAuth();
+  const { t } = useLanguage();
 
   if (!isAuthenticated) {
     return null;
@@ -25,7 +26,7 @@ const AuthButton: React.FC = () => {
         className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
       >
         <LogOut className="w-4 h-4 mr-2" />
-        Αποσύνδεση
+        {t('signOut')}
       </Button>
     </div>
   );

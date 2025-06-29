@@ -32,11 +32,13 @@ export const useBackupRestore = () => {
       
       toast.success('Backup επιτυχής!', {
         description: 'Το αρχείο backup θα κατέβει αυτόματα',
+        duration: 1500,
       });
     } catch (error) {
       console.error('Backup error:', error);
       toast.error('Σφάλμα backup', {
         description: 'Δεν ήταν δυνατή η δημιουργία αντιγράφου ασφαλείας',
+        duration: 1500,
       });
     } finally {
       setIsBackingUp(false);
@@ -82,12 +84,14 @@ export const useBackupRestore = () => {
           
           toast.success('Restore επιτυχής!', {
             description: `Ανακτήθηκαν ${restoredEntries.length} καταχωρίσεις`,
+            duration: 1500,
           });
           
           resolve(restoredEntries);
         } catch (error) {
           toast.error('Σφάλμα restore', {
             description: 'Δεν ήταν δυνατή η ανάκτηση των δεδομένων',
+            duration: 1500,
           });
           reject(error);
         } finally {
@@ -97,7 +101,7 @@ export const useBackupRestore = () => {
       
       reader.onerror = () => {
         setIsRestoring(false);
-        toast.error('Σφάλμα ανάγνωσης αρχείου');
+        toast.error('Σφάλμα ανάγνωσης αρχείου', { duration: 1500 });
         reject(new Error('File read error'));
       };
       

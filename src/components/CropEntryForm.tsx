@@ -3,8 +3,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { format } from 'date-fns';
-import { el } from 'date-fns/locale';
-import { Calendar as CalendarIcon } from 'lucide-react';
+import { el, enUS } from 'date-fns/locale';
+import { CalendarIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -15,18 +15,10 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { useCustomOptions } from '../hooks/useCustomOptions';
+import { useLanguage } from '../contexts/LanguageContext';
 import { CropEntry } from '../types/cropEntry';
 import AddCustomPlant from './AddCustomPlant';
 import AddCustomTask from './AddCustomTask';
-
-const formSchema = z.object({
-  plant: z.string().min(1, 'Επιλέξτε φυτό'),
-  task: z.string().min(1, 'Εισάγετε εργασία'),
-  date: z.date({
-    required_error: 'Επιλέξτε ημερομηνία',
-  }),
-  notes: z.string().optional(),
-});
 
 interface CropEntryFormProps {
   onSubmit: (data: Omit<CropEntry, 'id' | 'createdAt'>) => void;
@@ -35,8 +27,24 @@ interface CropEntryFormProps {
 }
 
 const CropEntryForm: React.FC<CropEntryFormProps> = ({ onSubmit, initialData, isSubmitting }) => {
+  const { t, currentLanguage } = useLanguage();
   const { getAllPlants, getAllTasks, addCustomPlant, addCustomTask, isLoaded } = useCustomOptions();
   const [selectedPlant, setSelectedPlant] = useState<string>(initialData?.plant || '');
+
+  // Get the appropriate locale for date formatting
+  const getLocale = () => {
+    return currentLanguage === 'el' ? el : enUS;
+  };
+
+  // Create form schema with translations
+  const formSchema = z.object({
+    plant: z.string().min(1, t('selectPlant')),
+    task: z.string().min(1, t('selectTask')),
+    date: z.date({
+      required_error: t('selectDate'),
+    }),
+    notes: z.string().optional(),
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -66,7 +74,7 @@ const CropEntryForm: React.FC<CropEntryFormProps> = ({ onSubmit, initialData, is
               <div className="w-16 h-16 sm:w-24 sm:h-24 mx-auto mb-4 bg-gray-700 rounded-full flex items-center justify-center">
                 <CalendarIcon className="w-8 h-8 sm:w-12 sm:h-12 text-gray-500 animate-pulse" />
               </div>
-              <h3 className="text-lg sm:text-xl font-medium text-gray-300 mb-2">Φόρτωση...</h3>
+              <h3 className="text-lg sm:text-xl font-medium text-gray-300 mb-2">{t('loading')}</h3>
             </div>
           </CardContent>
         </Card>
@@ -82,7 +90,7 @@ const CropEntryForm: React.FC<CropEntryFormProps> = ({ onSubmit, initialData, is
       <Card className="shadow-lg bg-gray-800 border-gray-700">
         <CardHeader className="border-b border-gray-700">
           <CardTitle className="text-xl sm:text-2xl font-bold text-gray-100">
-            {initialData ? 'Επεξεργασία καταχώρησης' : 'Νέα καταχώρηση'}
+            {initialData ? t('editEntry') : t('newEntry')}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4 sm:p-6 bg-gray-800">
@@ -93,7 +101,7 @@ const CropEntryForm: React.FC<CropEntryFormProps> = ({ onSubmit, initialData, is
                 name="plant"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm sm:text-base text-gray-300">Καλλιέργεια</FormLabel>
+                    <FormLabel className="text-sm sm:text-base text-gray-300">{t('plant')}</FormLabel>
                     <div className="flex gap-2">
                       <Select
                         value={field.value}
@@ -104,7 +112,7 @@ const CropEntryForm: React.FC<CropEntryFormProps> = ({ onSubmit, initialData, is
                       >
                         <FormControl>
                           <SelectTrigger className="flex-1">
-                            <SelectValue placeholder="Επιλέξτε καλλιέργεια" />
+                            <SelectValue placeholder={t('selectPlant')} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -130,7 +138,7 @@ const CropEntryForm: React.FC<CropEntryFormProps> = ({ onSubmit, initialData, is
                 name="task"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm sm:text-base text-gray-300">Εργασία</FormLabel>
+                    <FormLabel className="text-sm sm:text-base text-gray-300">{t('task')}</FormLabel>
                     <div className="flex gap-2">
                       <Select
                         value={field.value}
@@ -138,7 +146,7 @@ const CropEntryForm: React.FC<CropEntryFormProps> = ({ onSubmit, initialData, is
                       >
                         <FormControl>
                           <SelectTrigger className="flex-1">
-                            <SelectValue placeholder="Επιλέξτε εργασία" />
+                            <SelectValue placeholder={t('selectTask')} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -161,7 +169,7 @@ const CropEntryForm: React.FC<CropEntryFormProps> = ({ onSubmit, initialData, is
                 name="date"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel className="text-sm sm:text-base text-gray-300">Ημερομηνία</FormLabel>
+                    <FormLabel className="text-sm sm:text-base text-gray-300">{t('date')}</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -173,9 +181,9 @@ const CropEntryForm: React.FC<CropEntryFormProps> = ({ onSubmit, initialData, is
                             )}
                           >
                             {field.value ? (
-                              format(field.value, "PPP", { locale: el })
+                              format(field.value, "PPP", { locale: getLocale() })
                             ) : (
-                              <span>Επιλέξτε ημερομηνία</span>
+                              <span>{t('selectDate')}</span>
                             )}
                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
@@ -203,10 +211,10 @@ const CropEntryForm: React.FC<CropEntryFormProps> = ({ onSubmit, initialData, is
                 name="notes"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm sm:text-base text-gray-300">Σημειώσεις</FormLabel>
+                    <FormLabel className="text-sm sm:text-base text-gray-300">{t('notes')}</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Προαιρετικές σημειώσεις..."
+                        placeholder={t('optionalNotes')}
                         className="resize-none"
                         {...field}
                       />
@@ -220,9 +228,9 @@ const CropEntryForm: React.FC<CropEntryFormProps> = ({ onSubmit, initialData, is
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full sm:w-auto"
+                  className="bg-green-500 hover:bg-green-600 text-white"
                 >
-                  {isSubmitting ? 'Αποθήκευση...' : 'Αποθήκευση'}
+                  {isSubmitting ? t('saving') : t('save')}
                 </Button>
               </div>
             </form>

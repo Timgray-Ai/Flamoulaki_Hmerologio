@@ -1,4 +1,5 @@
 import { CropEntry } from '../types/cropEntry';
+import { generateUUID } from '../lib/utils';
 
 const ENTRIES_STORAGE_KEY = 'crop_entries';
 
@@ -42,7 +43,7 @@ export const addEntry = async (entryData: Omit<CropEntry, 'id' | 'createdAt'>): 
     const entries = await getEntries();
     const newEntry: CropEntry = {
       ...entryData,
-      id: crypto.randomUUID(),
+      id: generateUUID(),
       createdAt: new Date().toISOString()
     };
     

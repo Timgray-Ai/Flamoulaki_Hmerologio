@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { CropEntry } from '../types/cropEntry';
 import { format } from 'date-fns';
-import { el } from 'date-fns/locale';
+import { el, enUS } from 'date-fns/locale';
 import { Calendar, ChevronDown, ChevronRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useCustomOptions } from '../hooks/useCustomOptions';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface CropGroupedViewProps {
   entries: CropEntry[];
@@ -14,6 +15,12 @@ interface CropGroupedViewProps {
 const CropGroupedView: React.FC<CropGroupedViewProps> = ({ entries }) => {
   const [expandedPlants, setExpandedPlants] = useState<Set<string>>(new Set());
   const { getAllPlants, isLoaded } = useCustomOptions();
+  const { t, currentLanguage } = useLanguage();
+
+  // Get the appropriate locale for date formatting
+  const getLocale = () => {
+    return currentLanguage === 'el' ? el : enUS;
+  };
 
   // Don't render until custom options are loaded
   if (!isLoaded) {
@@ -22,7 +29,7 @@ const CropGroupedView: React.FC<CropGroupedViewProps> = ({ entries }) => {
         <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 bg-gray-700 rounded-full flex items-center justify-center">
           <Calendar className="w-10 h-10 sm:w-12 sm:h-12 text-gray-500 animate-pulse" />
         </div>
-        <h3 className="text-lg sm:text-xl font-medium text-gray-300 mb-2">Φόρτωση...</h3>
+        <h3 className="text-lg sm:text-xl font-medium text-gray-300 mb-2">{t('loading')}</h3>
       </div>
     );
   }
@@ -59,8 +66,8 @@ const CropGroupedView: React.FC<CropGroupedViewProps> = ({ entries }) => {
         <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 bg-gray-700 rounded-full flex items-center justify-center">
           <Calendar className="w-10 h-10 sm:w-12 sm:h-12 text-gray-500" />
         </div>
-        <h3 className="text-lg sm:text-xl font-medium text-gray-300 mb-2">Δεν υπάρχουν καταχωρίσεις</h3>
-        <p className="text-gray-400 text-sm sm:text-base">Προσθέστε την πρώτη καταχώριση για τις καλλιέργειές σας!</p>
+        <h3 className="text-lg sm:text-xl font-medium text-gray-300 mb-2">{t('noEntries')}</h3>
+        <p className="text-gray-400 text-sm sm:text-base">{t('addFirstEntry')}</p>
       </div>
     );
   }
@@ -90,9 +97,9 @@ const CropGroupedView: React.FC<CropGroupedViewProps> = ({ entries }) => {
   return (
     <div className="space-y-3 sm:space-y-4 px-2 sm:px-0">
       <div className="flex items-center justify-between mb-4 sm:mb-6 px-1">
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-100">Εργασίες ανά Καλλιέργεια</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-100">{t('grouped')}</h2>
         <span className="text-xs sm:text-sm text-gray-400 bg-gray-700 px-2 sm:px-3 py-1 rounded-full border border-gray-600">
-          {plantsToShow.length} καλλιέργειες
+          {plantsToShow.length} {t('crops')}
         </span>
       </div>
 
@@ -117,7 +124,7 @@ const CropGroupedView: React.FC<CropGroupedViewProps> = ({ entries }) => {
                       {plant.name}
                     </CardTitle>
                     <p className="text-xs sm:text-sm text-gray-400 mt-1">
-                      {plantEntries.length} εργασί{plantEntries.length === 1 ? 'α' : 'ες'}
+                      {plantEntries.length} {plantEntries.length === 1 ? t('task') : t('tasks')}
                     </p>
                   </div>
                 </div>
@@ -149,7 +156,7 @@ const CropGroupedView: React.FC<CropGroupedViewProps> = ({ entries }) => {
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-1">
                         <h4 className="font-medium text-gray-100 text-sm sm:text-base">{entry.task}</h4>
                         <span className="text-xs sm:text-sm text-gray-400 mt-1 sm:mt-0">
-                          {format(new Date(entry.date), 'dd/MM/yyyy', { locale: el })}
+                          {format(new Date(entry.date), 'dd/MM/yyyy', { locale: getLocale() })}
                         </span>
                       </div>
                       
@@ -158,7 +165,7 @@ const CropGroupedView: React.FC<CropGroupedViewProps> = ({ entries }) => {
                       )}
                       
                       <p className="text-xs text-gray-500 mt-1">
-                        Καταχωρίστηκε: {format(new Date(entry.createdAt), 'dd/MM/yyyy HH:mm', { locale: el })}
+                        {t('createdAt')}: {format(new Date(entry.createdAt), 'dd/MM/yyyy HH:mm', { locale: getLocale() })}
                       </p>
                     </div>
                   ))}

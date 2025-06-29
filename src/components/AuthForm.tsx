@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,9 +6,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import { Mail, Lock, User, Loader2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const AuthForm: React.FC = () => {
-  const { signIn, signUp } = useAuth();
+  const { t } = useLanguage();
+  const { signIn } = useAuth();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -27,7 +28,7 @@ const AuthForm: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     
-    await signIn(formData.email, formData.password);
+    await signIn();
     
     setLoading(false);
   };
@@ -36,7 +37,8 @@ const AuthForm: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     
-    await signUp(formData.email, formData.password);
+    // For now, just sign in since signUp is not implemented
+    await signIn();
     
     setLoading(false);
   };
@@ -46,10 +48,10 @@ const AuthForm: React.FC = () => {
       <Card className="w-full max-w-md bg-gray-800 border-gray-700">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl text-center text-green-400">
-            Καλλιέργειες App
+            {t('cropsApp')}
           </CardTitle>
           <p className="text-center text-gray-400">
-            Συνδεθείτε ή εγγραφείτε για να διαχειριστείτε τις καταχωρίσεις σας
+            {t('signInOrRegisterToManage')}
           </p>
         </CardHeader>
         
@@ -57,24 +59,24 @@ const AuthForm: React.FC = () => {
           <Tabs defaultValue="signin" className="w-full">
             <TabsList className="grid w-full grid-cols-2 bg-gray-700">
               <TabsTrigger value="signin" className="data-[state=active]:bg-green-600">
-                Σύνδεση
+                {t('login')}
               </TabsTrigger>
               <TabsTrigger value="signup" className="data-[state=active]:bg-green-600">
-                Εγγραφή
+                {t('register')}
               </TabsTrigger>
             </TabsList>
             
             <TabsContent value="signin" className="space-y-4 mt-4">
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signin-email" className="text-gray-300">Email</Label>
+                  <Label htmlFor="signin-email" className="text-gray-300">{t('email')}</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
                     <Input
                       id="signin-email"
                       name="email"
                       type="email"
-                      placeholder="Εισάγετε το email σας"
+                      placeholder={t('enterYourEmail')}
                       value={formData.email}
                       onChange={handleInputChange}
                       className="pl-10 bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400"
@@ -84,14 +86,14 @@ const AuthForm: React.FC = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="signin-password" className="text-gray-300">Κωδικός</Label>
+                  <Label htmlFor="signin-password" className="text-gray-300">{t('password')}</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
                     <Input
                       id="signin-password"
                       name="password"
                       type="password"
-                      placeholder="Εισάγετε τον κωδικό σας"
+                      placeholder={t('enterYourPassword')}
                       value={formData.password}
                       onChange={handleInputChange}
                       className="pl-10 bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400"
@@ -108,10 +110,10 @@ const AuthForm: React.FC = () => {
                   {loading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Σύνδεση...
+                      {t('signingIn')}
                     </>
                   ) : (
-                    'Σύνδεση'
+                    t('login')
                   )}
                 </Button>
               </form>
@@ -120,14 +122,14 @@ const AuthForm: React.FC = () => {
             <TabsContent value="signup" className="space-y-4 mt-4">
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signup-email" className="text-gray-300">Email</Label>
+                  <Label htmlFor="signup-email" className="text-gray-300">{t('email')}</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
                     <Input
                       id="signup-email"
                       name="email"
                       type="email"
-                      placeholder="Εισάγετε το email σας"
+                      placeholder={t('enterYourEmail')}
                       value={formData.email}
                       onChange={handleInputChange}
                       className="pl-10 bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400"
@@ -137,14 +139,14 @@ const AuthForm: React.FC = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password" className="text-gray-300">Κωδικός</Label>
+                  <Label htmlFor="signup-password" className="text-gray-300">{t('password')}</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
                     <Input
                       id="signup-password"
                       name="password"
                       type="password"
-                      placeholder="Δημιουργήστε κωδικό (τουλάχιστον 6 χαρακτήρες)"
+                      placeholder={t('createPassword')}
                       value={formData.password}
                       onChange={handleInputChange}
                       className="pl-10 bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400"
@@ -162,10 +164,10 @@ const AuthForm: React.FC = () => {
                   {loading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Εγγραφή...
+                      {t('signingUp')}
                     </>
                   ) : (
-                    'Εγγραφή'
+                    t('register')
                   )}
                 </Button>
               </form>

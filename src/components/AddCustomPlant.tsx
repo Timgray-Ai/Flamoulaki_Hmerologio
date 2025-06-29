@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,35 +6,54 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface AddCustomPlantProps {
   onAddPlant: (plant: { name: string; color: string; icon: string }) => void;
 }
 
-const PLANT_COLORS = [
-  { name: 'Πράσινο', value: '#16A34A' },
-  { name: 'Κόκκινο', value: '#DC2626' },
-  { name: 'Μπλε', value: '#2563EB' },
-  { name: 'Πορτοκαλί', value: '#EA580C' },
-  { name: 'Μωβ', value: '#7C3AED' },
-  { name: 'Καφέ', value: '#8B4513' },
-  { name: 'Ροζ', value: '#EC4899' },
-  { name: 'Κίτρινο', value: '#EAB308' },
-];
-
-const PLANT_ICONS = ['🌱', '🌿', '🌾', '🌻', '🌹', '🌷', '🌺', '🌸', '🥕', '🥬', '🥒', '🍅', '🍆', '🌶️', '🥔', '🧄', '🧅'];
-
 const AddCustomPlant: React.FC<AddCustomPlantProps> = ({ onAddPlant }) => {
+  const { t, currentLanguage } = useLanguage();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [color, setColor] = useState('');
   const [icon, setIcon] = useState('');
 
+  // Get plant colors based on language
+  const getPlantColors = () => {
+    if (currentLanguage === 'el') {
+      return [
+        { name: 'Πράσινο', value: '#16A34A' },
+        { name: 'Κόκκινο', value: '#DC2626' },
+        { name: 'Μπλε', value: '#2563EB' },
+        { name: 'Πορτοκαλί', value: '#EA580C' },
+        { name: 'Μωβ', value: '#7C3AED' },
+        { name: 'Καφέ', value: '#8B4513' },
+        { name: 'Ροζ', value: '#EC4899' },
+        { name: 'Κίτρινο', value: '#EAB308' },
+      ];
+    } else {
+      return [
+        { name: 'Green', value: '#16A34A' },
+        { name: 'Red', value: '#DC2626' },
+        { name: 'Blue', value: '#2563EB' },
+        { name: 'Orange', value: '#EA580C' },
+        { name: 'Purple', value: '#7C3AED' },
+        { name: 'Brown', value: '#8B4513' },
+        { name: 'Pink', value: '#EC4899' },
+        { name: 'Yellow', value: '#EAB308' },
+      ];
+    }
+  };
+
+  const PLANT_COLORS = getPlantColors();
+  const PLANT_ICONS = ['🌱', '🌿', '🌾', '🌻', '🌹', '🌷', '🌺', '🌸', '🥕', '🥬', '🥒', '🍅', '🍆', '🌶️', '🥔', '🧄', '🧅'];
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!name.trim() || !color || !icon) {
-      toast.error('Παρακαλώ συμπληρώστε όλα τα πεδία');
+      toast.error(t('fillAllFields'), { duration: 1500 });
       return;
     }
 
@@ -46,13 +64,13 @@ const AddCustomPlant: React.FC<AddCustomPlantProps> = ({ onAddPlant }) => {
         icon 
       });
       
-      toast.success('Η καλλιέργεια προστέθηκε επιτυχώς!');
+      toast.success(t('plantAddedSuccessfully'), { duration: 1500 });
       setName('');
       setColor('');
       setIcon('');
       setOpen(false);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Σφάλμα κατά την προσθήκη');
+      toast.error(error instanceof Error ? error.message : t('errorAddingPlant'), { duration: 1500 });
     }
   };
 
@@ -61,30 +79,30 @@ const AddCustomPlant: React.FC<AddCustomPlantProps> = ({ onAddPlant }) => {
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="text-xs">
           <Plus className="w-3 h-3 mr-1" />
-          Νέα καλλιέργεια
+          {t('newPlant')}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Προσθήκη νέας καλλιέργειας</DialogTitle>
+          <DialogTitle>{t('addNewPlant')}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="plant-name">Όνομα καλλιέργειας</Label>
+            <Label htmlFor="plant-name">{t('plantName')}</Label>
             <Input
               id="plant-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="π.χ. Μαρούλι"
+              placeholder={t('plantNameExample')}
               className="mt-1"
             />
           </div>
 
           <div>
-            <Label htmlFor="plant-color">Χρώμα</Label>
+            <Label htmlFor="plant-color">{t('color')}</Label>
             <Select value={color} onValueChange={setColor}>
               <SelectTrigger className="mt-1">
-                <SelectValue placeholder="Επιλέξτε χρώμα" />
+                <SelectValue placeholder={t('selectColor')} />
               </SelectTrigger>
               <SelectContent>
                 {PLANT_COLORS.map((colorOption) => (
@@ -103,10 +121,10 @@ const AddCustomPlant: React.FC<AddCustomPlantProps> = ({ onAddPlant }) => {
           </div>
 
           <div>
-            <Label htmlFor="plant-icon">Εικονίδιο</Label>
+            <Label htmlFor="plant-icon">{t('icon')}</Label>
             <Select value={icon} onValueChange={setIcon}>
               <SelectTrigger className="mt-1">
-                <SelectValue placeholder="Επιλέξτε εικονίδιο" />
+                <SelectValue placeholder={t('selectIcon')} />
               </SelectTrigger>
               <SelectContent>
                 {PLANT_ICONS.map((iconOption) => (
@@ -122,10 +140,10 @@ const AddCustomPlant: React.FC<AddCustomPlantProps> = ({ onAddPlant }) => {
 
           <div className="flex space-x-2 pt-4">
             <Button type="submit" className="flex-1">
-              Προσθήκη
+              {t('add')}
             </Button>
             <Button type="button" variant="outline" onClick={() => setOpen(false)} className="flex-1">
-              Ακύρωση
+              {t('cancel')}
             </Button>
           </div>
         </form>

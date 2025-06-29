@@ -1,11 +1,29 @@
-
 import { useState, useEffect } from 'react';
-import { CropPlant, CROP_PLANTS, TASK_OPTIONS, CUSTOM_PLANTS_KEY, CUSTOM_TASKS_KEY } from '../types/cropEntry';
+import { 
+  CropPlant, 
+  CROP_PLANTS_EL, 
+  CROP_PLANTS_EN,
+  TASK_OPTIONS_EL, 
+  TASK_OPTIONS_EN,
+  CUSTOM_PLANTS_KEY, 
+  CUSTOM_TASKS_KEY 
+} from '../types/cropEntry';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export const useCustomOptions = () => {
+  const { currentLanguage, t } = useLanguage();
   const [customPlants, setCustomPlants] = useState<CropPlant[]>([]);
   const [customTasks, setCustomTasks] = useState<string[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  // Get the appropriate plant and task data based on language
+  const getDefaultPlants = (): CropPlant[] => {
+    return currentLanguage === 'el' ? CROP_PLANTS_EL : CROP_PLANTS_EN;
+  };
+
+  const getDefaultTasks = (): string[] => {
+    return currentLanguage === 'el' ? TASK_OPTIONS_EL : TASK_OPTIONS_EN;
+  };
 
   // Load custom options from localStorage on mount
   useEffect(() => {
@@ -56,9 +74,10 @@ export const useCustomOptions = () => {
     const newPlant: CropPlant = { ...plant, id };
     
     // Check if plant already exists
-    const allPlants = [...CROP_PLANTS, ...customPlants];
+    const defaultPlants = getDefaultPlants();
+    const allPlants = [...defaultPlants, ...customPlants];
     if (allPlants.some(p => p.id === id || p.name === plant.name)) {
-      throw new Error('Η καλλιέργεια υπάρχει ήδη');
+      throw new Error(t('plantAlreadyExists'));
     }
 
     const updatedPlants = [...customPlants, newPlant];
@@ -71,9 +90,10 @@ export const useCustomOptions = () => {
     const trimmedTask = taskName.trim();
     
     // Check if task already exists
-    const allTasks = [...TASK_OPTIONS, ...customTasks];
+    const defaultTasks = getDefaultTasks();
+    const allTasks = [...defaultTasks, ...customTasks];
     if (allTasks.includes(trimmedTask)) {
-      throw new Error('Η εργασία υπάρχει ήδη');
+      throw new Error(t('taskAlreadyExists'));
     }
 
     const updatedTasks = [...customTasks, trimmedTask];
@@ -83,14 +103,16 @@ export const useCustomOptions = () => {
 
   // Get all plants (default + custom)
   const getAllPlants = (): CropPlant[] => {
-    const allPlants = [...CROP_PLANTS, ...customPlants];
+    const defaultPlants = getDefaultPlants();
+    const allPlants = [...defaultPlants, ...customPlants];
     console.log('getAllPlants called, returning:', allPlants);
     return allPlants;
   };
 
   // Get all tasks (default + custom)
   const getAllTasks = (): string[] => {
-    return [...TASK_OPTIONS, ...customTasks];
+    const defaultTasks = getDefaultTasks();
+    return [...defaultTasks, ...customTasks];
   };
 
   return {

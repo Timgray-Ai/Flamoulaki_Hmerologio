@@ -1,12 +1,15 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Calendar, List, Users, Plus } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface HomeProps {
   onViewChange: (view: 'list' | 'calendar' | 'add' | 'grouped' | 'auth') => void;
 }
 
 const Home: React.FC<HomeProps> = ({ onViewChange }) => {
+  const { t } = useLanguage();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
       {/* Mobile-optimized header */}
@@ -16,7 +19,7 @@ const Home: React.FC<HomeProps> = ({ onViewChange }) => {
             <div className="flex items-center space-x-3">
               <img
                 src="/lovable-uploads/1f08f82e-12c7-462f-ab64-a889203b9de5.png"
-                alt="Φλαμουλάκι Logo"
+                alt={t('appTitle') + ' Logo'}
                 className="w-10 h-10 sm:w-12 sm:h-12 object-contain cursor-pointer"
                 onClick={() => onViewChange('list')}
                 onKeyDown={(e) => {
@@ -27,7 +30,7 @@ const Home: React.FC<HomeProps> = ({ onViewChange }) => {
                 }}
                 tabIndex={0}
                 role="button"
-                aria-label="Μετάβαση στη λίστα καλλιεργειών"
+                aria-label={t('goToCropList')}
               />
             </div>
           </div>
@@ -39,10 +42,10 @@ const Home: React.FC<HomeProps> = ({ onViewChange }) => {
         {/* Mobile-optimized title section */}
         <div className="text-center mb-8 sm:mb-12">
           <h1 className="text-4xl sm:text-6xl font-bold mb-3 sm:mb-4">
-            <div style={{ color: '#a44ef4' }}>Φλαμουλάκι</div>
+            <div style={{ color: '#a44ef4' }}>{t('appTitle')}</div>
           </h1>
           <h2 className="text-2xl sm:text-4xl font-bold mb-6 sm:mb-8">
-            <div style={{ color: '#f66e14' }}>ημερολόγιο καλλιεργειών</div>
+            <div style={{ color: '#f66e14' }}>{t('cropDiary')}</div>
           </h2>
         </div>
 
@@ -51,18 +54,18 @@ const Home: React.FC<HomeProps> = ({ onViewChange }) => {
           <div 
             className="grid grid-cols-2 gap-3 sm:gap-6"
             role="grid"
-            aria-label="Επιλογές πλοήγησης εφαρμογής"
+            aria-label={t('appNavigationOptions')}
           >
             <Button
               onClick={() => onViewChange('calendar')}
               className="h-24 sm:h-32 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95"
               data-nav-index="0"
-              aria-label="Ανοίξει την προβολή ημερολογίου για να δείτε τις καλλιέργειες κατά ημερομηνία"
+              aria-label={t('openCalendarView')}
               role="gridcell"
             >
               <div className="flex flex-col items-center space-y-2 sm:space-y-3">
                 <Calendar className="w-6 h-6 sm:w-8 sm:h-8" aria-hidden="true" />
-                <span className="text-sm sm:text-lg font-semibold">Ημερολόγιο</span>
+                <span className="text-sm sm:text-lg font-semibold">{t('calendar')}</span>
               </div>
             </Button>
 
@@ -70,12 +73,12 @@ const Home: React.FC<HomeProps> = ({ onViewChange }) => {
               onClick={() => onViewChange('list')}
               className="h-24 sm:h-32 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95"
               data-nav-index="1"
-              aria-label="Ανοίξει τη λίστα όλων των καταχωρημένων καλλιεργειών"
+              aria-label={t('openCropList')}
               role="gridcell"
             >
               <div className="flex flex-col items-center space-y-2 sm:space-y-3">
                 <List className="w-6 h-6 sm:w-8 sm:h-8" aria-hidden="true" />
-                <span className="text-sm sm:text-lg font-semibold">Λίστα</span>
+                <span className="text-sm sm:text-lg font-semibold">{t('list')}</span>
               </div>
             </Button>
 
@@ -83,12 +86,12 @@ const Home: React.FC<HomeProps> = ({ onViewChange }) => {
               onClick={() => onViewChange('grouped')}
               className="h-24 sm:h-32 bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95"
               data-nav-index="2"
-              aria-label="Ανοίξει την ομαδοποιημένη προβολή καλλιεργειών κατά τύπο φυτού"
+              aria-label={t('openGroupedView')}
               role="gridcell"
             >
               <div className="flex flex-col items-center space-y-2 sm:space-y-3">
                 <Users className="w-6 h-6 sm:w-8 sm:h-8" aria-hidden="true" />
-                <span className="text-sm sm:text-lg font-semibold">Ομαδοποίηση</span>
+                <span className="text-sm sm:text-lg font-semibold">{t('grouped')}</span>
               </div>
             </Button>
 
@@ -96,12 +99,12 @@ const Home: React.FC<HomeProps> = ({ onViewChange }) => {
               onClick={() => onViewChange('add')}
               className="h-24 sm:h-32 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95"
               data-nav-index="3"
-              aria-label="Προσθήκη νέας καλλιέργειας"
+              aria-label={t('addNewCrop')}
               role="gridcell"
             >
               <div className="flex flex-col items-center space-y-2 sm:space-y-3">
                 <Plus className="w-6 h-6 sm:w-8 sm:h-8" aria-hidden="true" />
-                <span className="text-sm sm:text-lg font-semibold">Προσθήκη</span>
+                <span className="text-sm sm:text-lg font-semibold">{t('add')}</span>
               </div>
             </Button>
           </div>
@@ -110,7 +113,7 @@ const Home: React.FC<HomeProps> = ({ onViewChange }) => {
         {/* Mobile-optimized welcome message */}
         <div className="text-center mt-8 sm:mt-12">
           <p className="text-gray-300 text-base sm:text-lg px-4" role="banner">
-            Καλώς ήρθατε στο σύστημα διαχείρισης καλλιεργιών
+            {t('welcomeToCropSystem')}
           </p>
         </div>
       </main>

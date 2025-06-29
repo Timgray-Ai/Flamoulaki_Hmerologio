@@ -1,9 +1,10 @@
 import React, { useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Calendar, List, Users, Plus, Home, Download, Upload } from 'lucide-react';
+import { Calendar, List, Users, Plus, Home, Download, Upload, Globe } from 'lucide-react';
 import { useEntries } from '../hooks/useEntries';
 import { toast } from 'sonner';
 import { useBackupRestore } from '../hooks/useBackupRestore';
+import { useLanguage } from '../contexts/LanguageContext';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +15,7 @@ import {
 const Header = ({ currentView, onViewChange, isAuthenticated }) => {
   const { entries } = useEntries();
   const { exportToJson, importFromJson } = useBackupRestore();
+  const { t, currentLanguage, changeLanguage } = useLanguage();
   const fileInputRef = useRef(null);
 
   const handleBackup = async () => {
@@ -21,12 +23,13 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
       await exportToJson(entries);
       toast.success(
         <div>
-          <p>Αντίγραφο ασφαλείας δημιουργήθηκε</p>
-          <p className="text-sm text-gray-400">Αποθηκεύτηκε στο φάκελο Downloads/crop_backups</p>
-        </div>
+          <p>{t('backupCreated')}</p>
+          <p className="text-sm text-gray-400">{t('backupSaved')}</p>
+        </div>,
+        { duration: 1500 }
       );
     } catch (error) {
-      toast.error('Σφάλμα κατά τη δημιουργία αντιγράφου ασφαλείας');
+      toast.error(t('backupError'), { duration: 1500 });
     }
   };
 
@@ -36,8 +39,13 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
         fileInputRef.current.click();
       }
     } catch (error) {
-      toast.error('Σφάλμα κατά την επαναφορά');
+      toast.error(t('restoreError'), { duration: 1500 });
     }
+  };
+
+  const handleLanguageChange = async (language: 'el' | 'en') => {
+    await changeLanguage(language);
+    toast.success(t('languageChanged'), { duration: 1500 });
   };
 
   return (
@@ -49,10 +57,10 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
               variant="ghost"
               onClick={() => onViewChange('home')}
               className="text-gray-300 hover:text-white hover:bg-gray-700"
-              aria-label="Επιστροφή στην αρχική"
+              aria-label={t('backToHome')}
             >
               <Home className="h-5 w-5 mr-2" />
-              Αρχική
+              {t('home')}
             </Button>
             <Button
               variant="ghost"
@@ -60,10 +68,10 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
               className={`text-gray-300 hover:text-white hover:bg-gray-700 ${
                 currentView === 'calendar' ? 'bg-gray-700' : ''
               }`}
-              aria-label="Προβολή ημερολογίου"
+              aria-label={t('viewCalendar')}
             >
               <Calendar className="h-5 w-5 mr-2" />
-              Ημερολόγιο
+              {t('calendar')}
             </Button>
             <Button
               variant="ghost"
@@ -71,10 +79,10 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
               className={`text-gray-300 hover:text-white hover:bg-gray-700 ${
                 currentView === 'list' ? 'bg-gray-700' : ''
               }`}
-              aria-label="Προβολή λίστας"
+              aria-label={t('viewList')}
             >
               <List className="h-5 w-5 mr-2" />
-              Λίστα
+              {t('list')}
             </Button>
             <Button
               variant="ghost"
@@ -82,10 +90,10 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
               className={`text-gray-300 hover:text-white hover:bg-gray-700 ${
                 currentView === 'grouped' ? 'bg-gray-700' : ''
               }`}
-              aria-label="Προβολή ομαδοποιημένης λίστας"
+              aria-label={t('viewGrouped')}
             >
               <Users className="h-5 w-5 mr-2" />
-              Ομαδοποίηση
+              {t('grouped')}
             </Button>
             <Button
               variant="ghost"
@@ -93,13 +101,42 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
               className={`text-gray-300 hover:text-white hover:bg-gray-700 ${
                 currentView === 'add' ? 'bg-gray-700' : ''
               }`}
-              aria-label="Προσθήκη νέας καταχώρησης"
+              aria-label={t('addNewEntry')}
             >
               <Plus className="h-5 w-5 mr-2" />
-              Προσθήκη
+              {t('add')}
             </Button>
           </div>
           <div className="flex items-center space-x-2">
+            {/* Language Switcher */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-300 hover:text-white hover:bg-gray-700"
+                  aria-label={t('changeLanguage')}
+                >
+                  <Globe className="h-4 w-4 mr-1" />
+                  {currentLanguage === 'el' ? 'EL' : 'EN'}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem 
+                  onClick={() => handleLanguageChange('el')}
+                  className={currentLanguage === 'el' ? 'bg-gray-700' : ''}
+                >
+                  🇬🇷 Ελληνικά
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => handleLanguageChange('en')}
+                  className={currentLanguage === 'en' ? 'bg-gray-700' : ''}
+                >
+                  🇺🇸 English
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             {isAuthenticated && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -108,17 +145,17 @@ const Header = ({ currentView, onViewChange, isAuthenticated }) => {
                     className="text-gray-300 hover:text-white hover:bg-gray-700"
                   >
                     <Download className="h-5 w-5 mr-2" />
-                    Αντιγραφή/Επαναφορά
+                    {t('backupRestore')}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem onClick={handleBackup}>
                     <Download className="h-4 w-4 mr-2" />
-                    Δημιουργία αντιγράφου
+                    {t('createBackup')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleRestore}>
                     <Upload className="h-4 w-4 mr-2" />
-                    Επαναφορά από αντίγραφο
+                    {t('restoreFromBackup')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

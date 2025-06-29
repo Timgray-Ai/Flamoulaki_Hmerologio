@@ -1,6 +1,6 @@
-
 import { useState, useEffect } from 'react';
 import { CropEntry } from '../types/cropEntry';
+import { generateUUID } from '../lib/utils';
 import { toast } from 'sonner';
 
 interface PendingOperation {
@@ -26,14 +26,16 @@ export const useOfflineSync = () => {
     const handleOnline = () => {
       setIsOnline(true);
       toast.success('Επανασύνδεση στο διαδίκτυο', {
-        description: 'Συγχρονισμός δεδομένων...'
+        description: 'Συγχρονισμός δεδομένων...',
+        duration: 1500,
       });
     };
 
     const handleOffline = () => {
       setIsOnline(false);
       toast.info('Λειτουργία offline', {
-        description: 'Οι αλλαγές θα συγχρονιστούν όταν επανέλθει η σύνδεση'
+        description: 'Οι αλλαγές θα συγχρονιστούν όταν επανέλθει η σύνδεση',
+        duration: 1500,
       });
     };
 
@@ -54,7 +56,7 @@ export const useOfflineSync = () => {
   const queueOperation = (operation: Omit<PendingOperation, 'id' | 'timestamp'>) => {
     const newOperation: PendingOperation = {
       ...operation,
-      id: crypto.randomUUID(),
+      id: generateUUID(),
       timestamp: Date.now()
     };
 
